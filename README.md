@@ -112,8 +112,10 @@ TURN 서버의 IP와 포트 넘버 (TURN 서버로부터 획득 가능)
 ### 11. TLS와 유사한 DTLS 
 사실상 같은 동작방식이지만 DTLS는 UDP 기반이므로  핸드 셰이크 시퀀스 에서만 
 ***"mini-TCP" *** 를 구현
+
 -> 핸드 셰이크 레코드에 대한 명시 적 조각 오프셋 및 시퀀스 번호를 추가
 ->양측은 예상 간격 내에 응답이 수신되지 않으면 간단한 타이머를 사용하여 핸드 셰이크 레코드를 재전송헤 패킷손실을 처리;
+
 ![tp7](https://user-images.githubusercontent.com/30948477/114664684-0524ec00-9d37-11eb-8d0e-a2e5c05baea4.JPG)
 
 ### 12. WebRTC오픈소스 걷어내고 리펙토링
@@ -127,6 +129,6 @@ PeerJS/ PeerServerJS를 걷어내고 WebRTC API를 사용한다.
 
 
 참조
-https://brunch.co.kr/@linecard/141
-https://hpbn.co/webrtc/
+1. https://brunch.co.kr/@linecard/141
+2. https://hpbn.co/webrtc/
 
