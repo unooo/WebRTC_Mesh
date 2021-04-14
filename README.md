@@ -1,5 +1,6 @@
 ##### 라인 VOIP 직무를 향한 진심을 담다....! 
-
+클라이언트 코드 : views/main.ejs
+시그널링서버 코드 : server.js
 # WebRTC_Mesh 프로젝트 목적
 
 ### 1. 구글이 만든 VOIP 기반 WebRTC 기술을 사용해 Mesh 구조의 P2P를 구현/이해한다.
