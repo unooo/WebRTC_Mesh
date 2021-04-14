@@ -136,7 +136,7 @@ PeerJS/ PeerServerJS를 걷어내고 WebRTC API를 사용한다.
 1. Turn 서버 사용 : p2p가 아니게 되므로 서버 부하 증가. 아래의 케이스에서만 turn 서버 사용
 ![tp11](https://user-images.githubusercontent.com/30948477/114671605-3c979680-9d3f-11eb-870e-fd525f9c6abc.JPG)
 
-***2. Answer가 Offer로 재전송 로직 ***
+####2. Answer가 Offer로 재전송 로직 구현 **
 
 
 참조
