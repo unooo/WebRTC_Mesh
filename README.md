@@ -4,7 +4,7 @@
 
 ### 1. 구글이 만든 VOIP 기반 WebRTC 기술을 사용해 Mesh 구조의 P2P를 구현/이해한다.
 ### 2. VOIP의 프로토콜을 재사용한 WebRTC를 통해 VOIP이해를 위한 초석을 다진다.
-### 3. 이전에 제작한 CatchMind 프로젝트에서 어려웠던점을 해결한다
+### 3. 이전에 제작한 CatchMind 프로젝트에서 어려웠던점/을 해결한다
  
 + 어려웠던점, 힘들었던점
   + ***LTE가 Offer, Wifi(Full Cone Nat)가 Answer일시 연결 가능하나 반대일때 불가능한 이유 이해불가***
@@ -128,6 +128,15 @@ PeerJS/ PeerServerJS를 걷어내고 WebRTC API를 사용한다.
   + new RTCSessionDescription(SDP);
   + new RTCIceCandidate(candidate)
 
+---
+## 해결한 문제 
+![tp9](https://user-images.githubusercontent.com/30948477/114671172-c004b800-9d3e-11eb-9228-38e1195b83d7.png)
+
+## 해결방법
+1. Turn 서버 사용 : p2p가 아니게 되므로 서버 부하 증가. 아래의 케이스에서만 turn 서버 사용
+![tp11](https://user-images.githubusercontent.com/30948477/114671605-3c979680-9d3f-11eb-870e-fd525f9c6abc.JPG)
+
+***2. Answer가 Offer로 재전송 로직 ***
 
 
 참조
