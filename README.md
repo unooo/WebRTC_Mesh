@@ -56,14 +56,21 @@ Nat 는 단순히 외부IP/Port 와 내부 IP/Port를 변환해주는게 아닌
 ![tp4](https://user-images.githubusercontent.com/30948477/114663265-ff2e0b80-9d34-11eb-90ec-d53f3bf30590.JPG)
 
 ### MediaStream의 getUserMedis로 오디오와 비디오를 획득한다
+```javascript
   navigator.getUserMedia (constraints, gotStream, logError); 
+```
 
+### 코덱 표준은 오픈소스를 이용해 라이센스Fee를 내지 않는다
+![tp5](https://user-images.githubusercontent.com/30948477/114663694-ad39b580-9d35-11eb-8932-0e81116695ad.JPG)
+
+### RTCPeerConnection API의 대략적인 구조
+![tp6](https://user-images.githubusercontent.com/30948477/114663872-ec680680-9d35-11eb-84b8-4ec869ab531d.JPG)
 
 ### 0. WebRTC는 Use Of RTP 이다.(https가 강제되어 정확히는 SRTP)
 실시간 전송 프로토콜 (RTP) 는 IP 네트워크 상에서 오디오와 비디오를 전달하기 위한 통신 프로토콜.
 WebRTC API를 사용해 구현한 시그널링 서버로 두 피어가 시그널링을 한 후 P2P 통신을 한다
 ![tp1](https://user-images.githubusercontent.com/30948477/114661840-a2c9ec80-9d32-11eb-9384-c2c1294fded7.JPG)
-
+![tp8](https://user-images.githubusercontent.com/30948477/114665008-7369ae80-9d37-11eb-908c-b08cb9d8ce31.JPG)
 
 ### 1. 시그널링 서버란?
 p2p 연결을 위해 상호 간 ip/port 교환, SDP교환 등의 연결 설정을 교환하고 동의하기 위해 필요한 서버.
@@ -105,6 +112,12 @@ ICE 즉, STUN, TURN 서버를 이용해서 획득했던 IP 주소와 프로토�
 자신의 공인 IP와 포트 넘버 (STUN, TURN 서버로부터 획득 가능)
 TURN 서버의 IP와 포트 넘버 (TURN 서버로부터 획득 가능)
 
+### TLS와 유사한 DTLS 
+사실상 같은 동작방식이지만 DTLS는 UDP 기반이므로  핸드 셰이크 시퀀스 에서만 
+***"mini-TCP" *** 를 구현
+-> 핸드 셰이크 레코드에 대한 명시 적 조각 오프셋 및 시퀀스 번호를 추가
+->양측은 예상 간격 내에 응답이 수신되지 않으면 간단한 타이머를 사용하여 핸드 셰이크 레코드를 재전송헤 패킷손실을 처리;
+![tp7](https://user-images.githubusercontent.com/30948477/114664684-0524ec00-9d37-11eb-8d0e-a2e5c05baea4.JPG)
 
 ### 6. WebRTC오픈소스 걷어내고 리펙토링
 
