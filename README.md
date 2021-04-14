@@ -142,7 +142,7 @@ PeerJS/ PeerServerJS를 걷어내고 WebRTC API를 사용한다.
 
 3. 게임서버에서 쓴다는 UDP 홀 펀칭 사용 : WebRTC로 구현하는 미디어 통신 프로그램이라는 점에서  1, 2 번 방법이 장점이 더 크다고 판단.
 
-4. 홀펀치 방법중 Connection Reversal 응용 사용
+4. 홀펀치 방법중 (RFC 5128) Connection Reversal 응용 사용
 Stun 서버로 공인IP/사설IP를 파악한 데이터를 바탕으로 Full Cone NAT가 있는쪽으로 역전송을 요청한다
 ![tp12](https://user-images.githubusercontent.com/30948477/114694596-a91d9000-9d55-11eb-9ef0-1234f956cfda.JPG)
 
