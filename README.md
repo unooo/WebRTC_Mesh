@@ -14,15 +14,24 @@ Native WebRTC API를 직접 사용해 Mesh 구조의 P2P 프로젝트 제작.
 ### 3. Nat의 이해 + 실패시 재전송
 
 Nat 는 단순히 외부IP/Port 와 내부 IP/Port를 변환해주는게 아닌
-
-+Full Cone NAT
-+Restricted Cone NAT
-+Port Restricted Cone NAT
-+Symmetric NAT
++ Nat 종류  
+  + Full Cone NAT
+  + Restricted Cone NAT
+  + Port Restricted Cone NAT
+  + Symmetric NAT
+  
 
 가 있음을 이해하고 이를 바탕으로 **양쪽 피어가 모두 Symmetric NAT가 아닐때** Offer와 Answer를 바꿔 전송하도록 코드를 작성한다.
 
-####양쪽 피어가 모두 Symmetric NAT 일때는 Turn 서버가 필수.
+#### 양쪽 피어가 모두 Symmetric NAT 일때는 Turn 서버가 필수.
 
+---
+
+## 상세설명 
+
+### 1. WebRTC오픈소스 걷어내고 리펙토링
+
+PeerJS/ PeerServerJS를 걷어내고 WebRTC API를 사용한다.
++대표 WebRTC API
 
 
