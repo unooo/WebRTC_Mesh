@@ -99,7 +99,7 @@ ICE는 두 개의 단말이 P2P 연결을 가능하게 하도록 최적의 경�
 
 ### 9. Hole Puncing
 
-P2P 통신을 목적으로 Routing Table 을 작성하기 위해 사전에 상대방과 패킷을 주고받게 하여 각자의 공유기에 Routing Table을 작성하는 것을 홀 펀칭이라고 합니다. Stun 서버를 이용한다.
+P2P 통신을 목적으로 Routing Table 을 작성하기 위해 사전에 상대방과 패킷을 주고받게 하여 각자의 공유기에 Routing Table을 작성하는 것을 홀 펀칭이라고 합니다.
 
 ### 10. ICE Candidate 란?
 
