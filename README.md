@@ -1,21 +1,21 @@
-# 라인 VOIP 사랑해요 
+# 라인 VOIP 직무를 향한 진심을 담다....! 
 
 # WebRTC_Mesh 프로젝트 목적
 
-## 1. 구글의 VOIP 회사 인수를 통해 만들어진 WebRTC 기술을 사용해 Mesh 구조의 P2P를 구현한다.
-
-## 2. 기본적인 구조와 프로토콜이 매우 유사한 VOIP이해를 위한 초석을 다진다
-
-## 3. 이전에 제작한 CatchMind 프로젝트에서 어려웠던점을 해결한다
- 
- **전공지식 공부 및 오픈소스를 사용하지 않고 직접 구현하여 완벽한 이해를 목표로 한다**
+### 1. 구글의 VOIP 회사 인수를 통해 만들어진 WebRTC 기술을 사용해 Mesh 구조의 P2P를 구현한다.
+### 2. 기본적인 구조와 프로토콜이 매우 유사한 VOIP이해를 위한 초석을 다진다
+### 3. 이전에 제작한 CatchMind 프로젝트에서 어려웠던점을 해결한다
  
 + 어려웠던점, 힘들었던점
   + ***LTE가 Offer, Wifi(Full Cone Nat)가 Answer일시 연결 가능하나 반대일때 불가능한 이유 이해불가***
   + 위의 문제를 Turn 서버를 통해 해결할 수 있음을 확인해 Symmetric Nat가 원인임을 확인했으나 정확한 이유 이해불가
   + Nat의 네가지 종류에 대한 명확한 설명이 부족해 RFC를 하나하나 번역해 이해하는 어려움
-
+---
+ **이 3가지 목적을 위해 심화 전공지식 공부 및 오픈소스를 사용하지 않고 직접 구현하여 완벽한 이해를 목표로 한다**
+ 
 + 해결방법 및 이해하기 위한 노력
+  +  **한글 자료가 매우 부족한 방면 영문 및 공식문서 자료가 매우 방대한 양이지만 정리가 잘되어 있어 집중적으로 공부**
+  -https://hpbn.co/webrtc/
   +  모든 문제해결의 키는 전공지식이므로 관련 전공지식 전부 학습
   +  RTP, RTCP, NAT 4종류, ICE FrameWork, SDP, Turn/Stun 작동원리, Nat Traversal, Offer/Answer 구조 등 모든 이론 공부
   +  오픈소스가 아닌 실제 API를 통해 직접 구현
@@ -51,20 +51,38 @@ Nat 는 단순히 외부IP/Port 와 내부 IP/Port를 변환해주는게 아닌
 
 # 프로그램 구현을 위한 배경지식(WebRTC 연결성 및 NAT 통과 기법) 상세설명 
 
+### Web Application API : MediaSource 을 이용해 플러그인 없이 브라우져로 음성과 영상을 얻는다 + 노이즈, 에코, 패킷로스 처리까지 해준다
 
-### 0. WebRTC는 Use Of RTP 이다
+![tp4](https://user-images.githubusercontent.com/30948477/114663265-ff2e0b80-9d34-11eb-90ec-d53f3bf30590.JPG)
+
+### MediaStream의 getUserMedis로 오디오와 비디오를 획득한다
+  navigator.getUserMedia (constraints, gotStream, logError); 
+
+
+### 0. WebRTC는 Use Of RTP 이다.(https가 강제되어 정확히는 SRTP)
 실시간 전송 프로토콜 (RTP) 는 IP 네트워크 상에서 오디오와 비디오를 전달하기 위한 통신 프로토콜.
 WebRTC API를 사용해 구현한 시그널링 서버로 두 피어가 시그널링을 한 후 P2P 통신을 한다
+![tp1](https://user-images.githubusercontent.com/30948477/114661840-a2c9ec80-9d32-11eb-9384-c2c1294fded7.JPG)
+
 
 ### 1. 시그널링 서버란?
 p2p 연결을 위해 상호 간 ip/port 교환, SDP교환 등의 연결 설정을 교환하고 동의하기 위해 필요한 서버.
 ICE 프레임워크를 이용한다.
 
+![tp2](https://user-images.githubusercontent.com/30948477/114661957-d86ed580-9d32-11eb-8dfd-6eab7aecc068.png)
+### 2. offer / Answer 구조란?
+
+간단하게 전화를 걸면 Offer, 전화를 받으면 Answer 이다.
+
+![oa](https://user-images.githubusercontent.com/30948477/114662307-6a76de00-9d33-11eb-816a-ea56c3fde86e.jpeg)
 ### 2. SDP란?
 
-IETF의 RFC 4566 으로 스트리밍 미디어의 초기화 인수를 기술하기 위한 포맷.
+IETF의 RFC 4566 으로 스트리밍 미디어의 초기화 인수를 기술하기 위한 포맷. Offer / Answer 구조로 주고 받는다.
 SDP(Session Description Protocol)는 WebRTC에서 스트리밍 미디어의 해상도나 형식, 코덱 등의 멀티미디어 컨텐츠의 초기 인수를 설명하기 위해 채택한 프로토콜. 
 (ex: 웹캠 비디오의 해상도를 보낼 수 있고, 오디오 전송 또는 수신 여부)
+
+![tp3](https://user-images.githubusercontent.com/30948477/114662071-0eac5500-9d33-11eb-9323-f4bfb41209af.JPG)
+
 
 ### 3. ICE Framework란?
 NAT 통과 기법을 위한 네트워크 표준.
@@ -96,4 +114,9 @@ PeerJS/ PeerServerJS를 걷어내고 WebRTC API를 사용한다.
   + new RTCSessionDescription(SDP);
   + new RTCIceCandidate(candidate)
 
+
+
+참조
+https://brunch.co.kr/@linecard/141
+https://hpbn.co/webrtc/
 
