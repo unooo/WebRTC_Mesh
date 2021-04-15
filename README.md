@@ -135,7 +135,7 @@ PeerJS/ PeerServerJS를 걷어내고 WebRTC API를 사용한다.
 ![tp9](https://user-images.githubusercontent.com/30948477/114671172-c004b800-9d3e-11eb-9228-38e1195b83d7.png)
 즉, 단순히 stun 서버만을 이용한 홀펀칭이 불가능 하며 게임서버에서 사용하는 UDP 홀펀칭을 이용하거나 Relay 서버인 Turn 서버를 사용해야된다
 
-## 해결방법
+## 해결방법 후보
 1. Turn 서버 사용 : p2p가 아니게 되므로 서버 부하 증가. 양 측이 Symetric Nat 최후의 상황에서만 사용한다.
 
 2. 미디어 서버 사용(SFU/MCU) : Turn 서버와 마찬가지로 릴레이 서버이지만 클라이언트끼리의 p2p가 아닌 중간 서버를 징검다리로 P2P 구성
@@ -146,7 +146,7 @@ PeerJS/ PeerServerJS를 걷어내고 WebRTC API를 사용한다.
 
 3. 게임서버에서 쓴다는 UDP 홀 펀칭 사용 : WebRTC로 구현하는 미디어 통신 프로그램이라는 점에서  1, 2 번 방법이 장점이 더 크다고 판단.
 
-4. 홀펀치 방법중 (RFC 5128) Connection Reversal 응용 사용
+### 4. 홀펀치 방법중 (RFC 5128) Connection Reversal 응용 사용
 Stun 서버로 공인IP/사설IP를 파악한 데이터를 바탕으로 Full Cone NAT가 있는쪽으로 역전송을 요청한다
 ![tp12](https://user-images.githubusercontent.com/30948477/114694596-a91d9000-9d55-11eb-9ef0-1234f956cfda.JPG)
 
