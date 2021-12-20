@@ -1,4 +1,4 @@
-클라이언트 코드 : views/main.ejs
+클라이언트 코드 : views/main.ejs, public/myMeshRTC.js
 
 시그널링서버 코드 : server.js
 # WebRTC_Mesh 프로젝트 목적
