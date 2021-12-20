@@ -24,6 +24,10 @@
   +  RTP, RTCP, NAT 4종류, ICE FrameWork, SDP, Turn/Stun 작동원리, Nat Traversal, Offer/Answer 구조 등 모든 이론 공부
   +  오픈소스가 아닌 실제 API를 통해 직접 구현
   +  연결 실패 재전송 로직 구성
+---
+## 사용 언어 및 프레임워크, 오픈소스
+
+#### Node.js, WebRTC, Socket.io, Coturn
 
 ---
 ## 프로젝트 수행 내용
