@@ -5,344 +5,44 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>Page Title</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <script src="/socket.io/socket.io.js"></script>
     <link href="main.css" rel="stylesheet">
-    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="myMeshRTC.js"></script>
     <script>
-
+        let localVideo;
+        let videoGrid;
+        let connectionStateSpan;        
+        let MyRTCData;
         window.onload = function () {
-            App();
+            refreshMyConnection();
         }
-
-        const App = () => {
-            const pc_config = {
-                "iceServers": [
-                    // {
-                    //   urls: 'stun:[STUN_IP]:[PORT]',
-                    //   'credentials': '[YOR CREDENTIALS]', // 패스워드를 의미
-                    //   'username': '[USERNAME]'
-                    // },
-                    // {
-                    //   urls: 'turn:unoo.kro.kr:3478',
-                    //   'credentials': 'unoopwd', // 패스워드를 의미
-                    //   'username': 'unoo'
-                    // },
-                    {
-                        urls: 'stun:stun.l.google.com:19302'
-                    }
-                ]
-            }
-            const video_config = {
-                width: 240,
-                height: 240,
-                margin: 5,
-                backgroundColor: 'black',
-            }
-
-            const retryMax = 3;            
-            let localVideo = document.getElementById('localVideo');
-            const videoGrid = document.getElementById('video-grid');
-
-            let pcs;
-            let localId;
-            let remoteVideos = [];
-            let offers = [];
-            let answers = [];
-
-            let newSocket = io({ transports: ['websocket'] }).connect('https://www.unoo.kro.kr');
-
-            let newPC = new RTCPeerConnection(pc_config);
-
-            newSocket.on('all_users', (allUsers) => {
-                let len = allUsers.length;
-                for (let i = 0; i < len; i++) {
-                    
-                    createOffer(allUsers[i], newSocket, localStream);
-                }
-
-            });
-
-            newSocket.on('getOffer', (data) => {
-                //console.log(sdp);
-                createAnswer(data);
-            });
-
-            newSocket.on('getAnswer', (data) => {
-                console.log('get answer');
-                let pc = pcs[data.answerSendID];
-                if (pc) {
-                    pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
-                }
-                //console.log(sdp);
-            });
-
-            newSocket.on('getCandidate', (data) => {
-                console.log('get candidate');
-                let pc = pcs[data.candidateSendID];
-                if (pc) {
-                    pc.addIceCandidate(new RTCIceCandidate(data.candidate)).then(() => {
-                        console.log('candidate add success');
-                    })
-                }
-            })
-
-            ////////////////중요 start!!!!!!!!!!
-            newSocket.on('offerDisconnected', (data) => {
-                //offer의 연결이 비정상으로 확인. 
-                //answer가 offer로 재요청 시도.                
-                //alert('i am answer');
-                console.log('get Disconnected');                
-                let delVideoFlag;
-                if(data.retryNum>retryMax){
-                    alert("[연결실패]-연결시도 초과");                 
-                    delVideoFlag=true;
-                }else{
-                    let videoTag = document.getElementById(data.offerUser.id + "-idTag");
-                    videoTag.innerHTML = "[연결실패]-재시도 횟수 :" +(data.retryNum)+"/"+retryMax;
-                    delVideoFlag=false;
-                }
-                let pc = pcs[data.offerUser.id];
-                if (pc) {
-                    peerExit(data.offerUser.id, delVideoFlag);                 
-                }
-                if(!delVideoFlag)
-                    createOffer(data.offerUser, newSocket, localStream);
-            })
-            ////////////////중요 end !!!!!!!!!!
-
-            newSocket.on('user_exit', async (data) => {
-                console.log("peer exit");
-                if (data.id == newSocket.id) {
-                    alert('My Socket Connection is close. plz F5')
-                    newSocket = io({ transports: ['websocket'] }).connect('https://www.unoo.kro.kr');
-                }
-                peerExit(data.id, true);
-            })
-
-            navigator.mediaDevices.getUserMedia({
-                audio: true,
-                video: {
-                    width: 240,
-                    height: 240
-                }
-            }).then(stream => {
-                if (localVideo) localVideo.srcObject = stream;
-
-                localStream = stream;
-
-                newSocket.emit('join_room', { room: '1234', email: 'sample@naver.com' });
-
-            }).catch(error => {
-                console.log(`getUserMedia error: ${error}`);
-            });
-
-
-
-            const createOffer = (user, newSocket, localStream) => {                
-                console.log('create offer');
-                createPeerConnection(user.id, user.email, newSocket, localStream);
-                let pc = pcs[user.id];
-                answers.push(user.id);
-                if (pc) {
-                    pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true })
-                        .then(sdp => {
-                            console.log('create offer success');
-                            pc.setLocalDescription(new RTCSessionDescription(sdp));
-                            newSocket.emit('offer', {
-                                sdp: sdp,
-                                offerSendID: newSocket.id,
-                                offerSendEmail: 'offerSendSample@sample.com',
-                                offerReceiveID: user.id
-                            });
-                        })
-                        .catch(error => {
-                            console.log(error);
-                        })
-                }
-            }
-
-            const createAnswer = (data) => {        
-                console.log('create answer');
-                createPeerConnection(data.offerSendID, data.offerSendEmail, newSocket, localStream);
-                let pc = pcs[data.offerSendID];
-                offers.push(data.offerSendID);
-                if (pc) {
-                    pc.setRemoteDescription(new RTCSessionDescription(data.sdp)).then(() => {
-                        console.log('answer set remote description success');
-                        pc.createAnswer({ offerToReceiveVideo: true, offerToReceiveAudio: true })
-                            .then(sdp => {
-                                console.log('create answer success');
-                                pc.setLocalDescription(new RTCSessionDescription(sdp));
-                                newSocket.emit('answer', {
-                                    sdp: sdp,
-                                    answerSendID: newSocket.id,
-                                    answerReceiveID: data.offerSendID
-                                });
-                            })
-                            .catch(error => {
-                                console.log(error);
-                            })
-                    })
-                }
-
-            }
-            const createPeerConnection = (socketID, email, newSocket, localStream) => {
-
-                let pc = new RTCPeerConnection(pc_config);
-
-                // add pc to peerConnections object
-                pcs = { ...pcs, [socketID]: pc };
-
-                pc.onicecandidate = (e) => {
-                    if (e.candidate) {
-                        console.log('onicecandidate');
-                        newSocket.emit('candidate', {
-                            candidate: e.candidate,
-                            candidateSendID: newSocket.id,
-                            candidateReceiveID: socketID
-                        });
-                    }
-                }
-
-                pc.onconnectionstatechange = (e) => {
-                    if (pc.connectionState == 'failed') {
-                        console.log("peer connection failed\n change position and retry####################");
-                        let videoTag = document.getElementById(socketID + "-idTag");
-                        let retryNum=parseInt(videoTag.getAttribute("data-retryNum"))+1;
-                        videoTag.setAttribute("data-retryNum",retryNum);
-                        videoTag.innerHTML = "[연결실패]-재시도 횟수 :" +(retryNum)+"/"+retryMax;                        
-                        for (let i = 0; i < answers.length; i++) {
-                            if (answers[i] == socketID) {
-                                // alert('i am offer');    
-                               let delVideoFlag;                           
-                                if (retryNum >retryMax ) {
-                                    alert("[연결실패]-연결시도 초과");
-                                    delVideoFlag=true;
-                                } else {               
-                                    delVideoFlag=false;               
-                                }
-                                peerExit(socketID,delVideoFlag);
-                                newSocket.emit('offerDisconnected', {
-                                    offerSendOfferId: newSocket.id,//myId
-                                    offerSendAnswerId: socketID,
-                                    retryNum: retryNum
-                                });
-                                
-                            }
-                        }
-                        
-                    } else if (pc.connectionState == 'connected') {
-                        console.log("connected#######################################################");                       
-                        //let video = document.getElementById(socketID);
-                        let videoTag = document.getElementById(socketID+"-idTag");
-                      // videoTag.innerHTML=videoTag.getAttribute('data-email');
-                      videoTag.innerHTML=socketID;
-                    }
-                }
-
-                pc.oniceconnectionstatechange = (e) => {
-                    //disconnected는 새로고침이나 뒤로가기등등에 적용됨          
-                    if (pc.iceConnectionState === "failed") {
-                        //pc.restartIce(); 
-                        //이거 안먹힘
-                    } else if (pc.connectionState != 'connecting' && pc.iceConnectionState === "disconnected") {
-                        //정상 연결중 새로고침
-                    }
-                    else if (pc.connectionState == 'connecting' && pc.iceConnectionState === "disconnected") {
-                        //alert("확인코드 pc.iceConnectionState:"+pc.iceConnectionState +"\n pc.connectionState: "+pc.connectionState);
-                        // newSocket.emit('offerDisconnected', {
-                        //         offerSendID: newSocket.id,
-
-                        // });
-                    } else if (pc.iceConnectionState === "closed") {
-                        //alert("closed pc.iceConnectionState:"+pc.iceConnectionState +"\n pc.connectionState: "+pc.connectionState);
-                    }
-                    else {
-                        //alert("pc.iceConnectionState:"+pc.iceConnectionState +"\n pc.connectionState: "+pc.connectionState);
-                    }
-
-                }
-
-                pc.ontrack = (e) => {
-                    console.log('ontrack success');
-                    remoteVideo = remoteVideos.filter(user => user.id == socketID)[0];
-                    if (!remoteVideo) {
-                        // some thing wrong
-                        makeOtherVideo(socketID,email);
-                    } else {
-                        remoteVideo.srcObject = e.streams[0];
-                    }
-                }
-
-                if (localStream) {
-                    console.log('localstream add');
-                    localStream.getTracks().forEach(track => {
-                        pc.addTrack(track, localStream);
-                    });
-                } else {
-                    console.log('no local stream');
-                    alert('no local stream');
-                }
-
-                // return pc
-                return pc;
-
-            }
-            function peerExit(socketID,delVideoFlag){
-                pcs[socketID].close();
-                delete pcs[socketID];
-                for (let i = 0; i < answers.length; i++) {
-                    if (offers[i] == socketID)
-                        delete offers[i];
-                    if (answers[i] == socketID)
-                        delete answers[i];
-                }
-               //자료구조에서 비디오 지우기
-               if(delVideoFlag)
-                    removeVideo(socketID);
-            }
-            function makeOtherVideo(socketID,email) {
-                /*Set Video Outer*/
-                let divOuter = document.createElement('div');
-                divOuter.style.float="left";
-                /*Set Video Tag*/
-                let idTag = document.createElement('div');
-                idTag.id=socketID+'-idTag';
-               
-                idTag.innerHTML+="loading";
-                idTag.setAttribute('data-email',email);
-                idTag.setAttribute("data-retryNum",0);
-                /*Set Video */
-                const video = document.createElement('video');
-                Object.assign(video.style,video_config);
-                video.setAttribute('playsinline', true);
-                video.setAttribute('autoplay', true);
-                video.id = socketID;                
-                video.setAttribute('data-email',email);
-                video.poster = "https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif";
-                remoteVideos.push(video);
-                /*Append Element*/
-                divOuter.append(video);
-                divOuter.append(idTag);
-                document.body.append(divOuter);               
-               
-            }
-            function removeVideo(socketID) {
-                for (let i = 0; i < remoteVideos.length; i++) {
-                    {
-                        let delVideo = remoteVideos[i];
-                        if (delVideo.id != socketID)
-                            continue;
-                        remoteVideos.splice(i, 1);
-                        let parent = delVideo.parentNode;
-                        parent.remove();
-                        break;
-
-                    }
-                }
-            }
-        };
         
+        function disconnectMyConnection() {
+            //기존 RTC연결을 전부 삭제 후 소켓연결 종료 , 비디오 제거   
+            if (!MyRTCData)
+                return;
+            for (let key in MyRTCData.pcs)
+                MyRTCData.pcs[key].close();
+            removeVideoAll();
+            MyRTCData.socket.emit('disconnect');
+            MyRTCData.socket.disconnect();
+            MyRTCData = null;
+        }
+        function refreshMyConnection() {
+            disconnectMyConnection();
+            localVideo = document.getElementById('localVideo');
+            videoGrid = document.getElementById('video-grid');
+            connectionStateSpan = document.getElementById('connectionStateSpan');
+            MyRTCData = App(localVideo,videoGrid ,connectionStateSpan);            
+        }
+        function removeVideoAll() {
+            MyRTCData.remoteVideos.forEach(delVideo => {
+                if (delVideo.id == MyRTCData.socket.id)
+                    return;
+                delVideo.parentNode.remove();
+
+            })
+        }
 
     </script>
 
@@ -350,12 +50,15 @@
 
 <body>
     <div>My Video</div>
+    <div><span>접속 상태 :</span><span id='connectionStateSpan'></span></div>
+    <input type='button' id='disconnectMyConnecionBtn' value="내 연결 끊기" onclick="disconnectMyConnection()">
+    <input type='button' id='refreshMyConnecionBtn' value="내 연결 새로고침" onclick="refreshMyConnection()">
     <div>
         <video style="
             width: 240;
             height: 240;
             margin: 5;
-            backgroundColor: 'black';
+            backgroundColor: 'black';            
           " id="localVideo" muted playsinline autoplay>
         </video>
     </div>
