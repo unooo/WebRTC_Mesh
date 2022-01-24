@@ -1,12 +1,20 @@
 클라이언트 코드 : views/main.ejs, public/myMeshRTC.js
 
 시그널링서버 코드 : server.js
-# WebRTC_Mesh 프로젝트 목적
-
-### 1. 구글이 만든 VOIP 기반 WebRTC 기술을 사용해 Mesh 구조의 P2P를 구현/이해한다.
-
+# WebRTC 시리즈 2. WebRTC_Mesh 
 ![image](https://user-images.githubusercontent.com/30948477/148039312-c0da9173-d31e-4cb9-8f40-c74a2afc0882.png)
 
+###  WebRTC 시리즈 1.
++ CatchMind : https://github.com/unooo/CatchMind
+###  WebRTC 시리즈 3. 
++ p2p SFU 서버 구현 :  https://github.com/unooo/WebRTC_SFU
+###  WebRTC 시리즈 4. 
++ CatchMind_Renewal :  https://github.com/unooo/CatchMind_Renewal
+
+
+## 프로젝트 목적
+
+### 1. 구글이 만든 VOIP 기반 WebRTC 기술을 사용해 Mesh 구조의 P2P를 직접 구현해 이해한다.
 ### 2. VOIP의 프로토콜을 재사용한 WebRTC를 통해 VOIP이해를 위한 초석을 다진다.
 ### 3. 이전에 제작한 CatchMind 프로젝트에서 어려웠던점/문제였던점 을 해결한다.
 ### 4. Turn 서버를 오픈소스 Coturn으로 docker를 이용해 직접 구축한다.
