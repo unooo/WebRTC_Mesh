@@ -199,6 +199,8 @@ Stun 서버로 공인IP/사설IP를 파악한 데이터를 바탕으로 Full Con
                 createOffer(data.offerUser, newSocket, localStream);
        }              
 ```
+## 실행화면
+![image](https://user-images.githubusercontent.com/30948477/150794069-49fb70eb-56e9-45cb-ac35-b809ed1789f0.png)
 
 
 참조
